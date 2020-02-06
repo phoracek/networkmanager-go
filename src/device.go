@@ -9,6 +9,7 @@ const (
 	GetDeviceByIpIfaceCall   = "org.freedesktop.NetworkManager.GetDeviceByIpIface"
 	DeviceInterfaceProperty  = "org.freedesktop.NetworkManager.Device.Interface"
 	DeviceDeviceTypeProperty = "org.freedesktop.NetworkManager.Device.DeviceType"
+	DeviceStateProperty      = "org.freedesktop.NetworkManager.Device.State"
 )
 
 type DeviceType string
@@ -65,9 +66,44 @@ var deviceTypeByNmDeviceType = map[uint32]DeviceType{
 	22: DeviceTypeDummy,
 }
 
+type DeviceState string
+
+const (
+	DeviceStateUnknown      DeviceState = "unknown"
+	DeviceStateUnmanaged    DeviceState = "unmanaged"
+	DeviceStateUnavailable  DeviceState = "unavailable"
+	DeviceStateDisconnected DeviceState = "disconnected"
+	DeviceStatePrepare      DeviceState = "prepare"
+	DeviceStateConfig       DeviceState = "config"
+	DeviceStateNeedAuth     DeviceState = "need-auth"
+	DeviceStateIPConfig     DeviceState = "ip-config"
+	DeviceStateIPCheck      DeviceState = "ip-check"
+	DeviceStateSecondaries  DeviceState = "secondaries"
+	DeviceStateActivated    DeviceState = "activated"
+	DeviceStateDeactivating DeviceState = "deactivating"
+	DeviceStateFailed       DeviceState = "failed"
+)
+
+var deviceStateByNmDeviceState = map[uint32]DeviceState{
+	0:   DeviceStateUnknown,
+	10:  DeviceStateUnmanaged,
+	20:  DeviceStateUnavailable,
+	30:  DeviceStateDisconnected,
+	40:  DeviceStatePrepare,
+	50:  DeviceStateConfig,
+	60:  DeviceStateNeedAuth,
+	70:  DeviceStateIPConfig,
+	80:  DeviceStateIPCheck,
+	90:  DeviceStateSecondaries,
+	100: DeviceStateActivated,
+	110: DeviceStateDeactivating,
+	120: DeviceStateFailed,
+}
+
 type Device struct {
 	Interface    string
 	Type         DeviceType
+	State        DeviceState
 	deviceObject dbus.BusObject
 }
 
@@ -83,6 +119,10 @@ func (client *Client) newDeviceFromPath(devicePath dbus.ObjectPath) *Device {
 	deviceTypePropertyVariant, _ := deviceObject.GetProperty(DeviceDeviceTypeProperty)
 	nmDeviceType := deviceTypePropertyVariant.Value().(uint32)
 	device.Type = deviceTypeByNmDeviceType[nmDeviceType]
+
+	deviceStatePropertyVariant, _ := deviceObject.GetProperty(DeviceStateProperty)
+	nmDeviceState := deviceStatePropertyVariant.Value().(uint32)
+	device.State = deviceStateByNmDeviceState[nmDeviceState]
 
 	return device
 }

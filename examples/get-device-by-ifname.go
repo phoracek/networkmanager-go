@@ -14,5 +14,5 @@ func main() {
 	defer client.Close()
 
 	device := client.GetDeviceByIpIface(deviceIface)
-	fmt.Printf("%s [%s]\n", device.Interface, device.Type)
+	fmt.Printf("%s [%s %s]\n", device.Interface, device.Type, device.State)
 }
