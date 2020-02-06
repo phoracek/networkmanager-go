@@ -1,0 +1,4 @@
+# github.com/godbus/dbus v4.1.0+incompatible
+github.com/godbus/dbus
+# github.com/satori/go.uuid v1.2.0
+github.com/satori/go.uuid
