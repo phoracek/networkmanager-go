@@ -25,6 +25,18 @@ func NewClient() (*Client, error) {
 	return client, nil
 }
 
+func NewClientPrivate() (*Client, error) {
+	client := new(Client)
+
+	dbusConn, err := dbus.SystemBusPrivate()
+	if err != nil {
+		return client, err
+	}
+
+	client.conn = dbusConn
+	return client, nil
+}
+
 func (client *Client) Close() {
 	client.conn.Close()
 	client.conn = nil
