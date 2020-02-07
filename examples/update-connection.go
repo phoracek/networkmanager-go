@@ -8,7 +8,10 @@ import (
 )
 
 func main() {
-	client := networkmanager.NewClient()
+	client, err := networkmanager.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	defer client.Close()
 
 	if connection := findConnection(client, "bridge-br-test"); connection != nil {
@@ -40,12 +43,17 @@ func main() {
 }
 
 func findConnection(client *networkmanager.Client, connectionID string) *networkmanager.Connection {
-	connections := client.ListConnections()
+	connections, err := client.ListConnections()
+	if err != nil {
+		panic(err)
+	}
+
 	for _, connection := range connections {
 		settings, _ := connection.GetSettings()
 		if settings["connection"]["id"] == connectionID {
 			return connection
 		}
 	}
+
 	return nil
 }

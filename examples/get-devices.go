@@ -7,10 +7,17 @@ import (
 )
 
 func main() {
-	client := networkmanager.NewClient()
+	client, err := networkmanager.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	defer client.Close()
 
-	devices := client.GetDevices()
+	devices, err := client.GetDevices()
+	if err != nil {
+		panic(err)
+	}
+
 	for _, device := range devices {
 		fmt.Printf("%s [%s, %s]\n", device.Interface, device.Type, device.State)
 	}

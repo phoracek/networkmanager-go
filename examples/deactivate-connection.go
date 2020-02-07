@@ -10,7 +10,10 @@ import (
 func main() {
 	connectionIDToDeactivate := os.Args[1]
 
-	client := networkmanager.NewClient()
+	client, err := networkmanager.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	defer client.Close()
 
 	if activeConnection := findActiveConnection(client, connectionIDToDeactivate); activeConnection != nil {

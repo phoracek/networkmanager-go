@@ -10,9 +10,16 @@ import (
 func main() {
 	deviceIface := os.Args[1]
 
-	client := networkmanager.NewClient()
+	client, err := networkmanager.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	defer client.Close()
 
-	device := client.GetDeviceByIpIface(deviceIface)
+	device, err := client.GetDeviceByIpIface(deviceIface)
+	if err != nil {
+		panic(err)
+	}
+
 	fmt.Printf("%s [%s %s]\n", device.Interface, device.Type, device.State)
 }

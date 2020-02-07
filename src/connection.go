@@ -46,10 +46,14 @@ func (client *Client) newActiveConnectionFromPath(activeConnectionPath dbus.Obje
 	return activeConnection
 }
 
-func (client *Client) ListConnections() []*Connection {
-	call := client.conn.Object(InterfacePath, SettingsObjectPath).Call(SettingsListConnectionsCall, 0)
-	check(call.Err)
+func (client *Client) ListConnections() ([]*Connection, error) {
 	var connectionsPaths []dbus.ObjectPath
+
+	call := client.conn.Object(InterfacePath, SettingsObjectPath).Call(SettingsListConnectionsCall, 0)
+	if call.Err != nil {
+		return nil, call.Err
+	}
+
 	call.Store(&connectionsPaths)
 
 	connections := make([]*Connection, 0, len(connectionsPaths))
@@ -57,7 +61,8 @@ func (client *Client) ListConnections() []*Connection {
 		connection := client.newConnectionFromPath(connectionPath)
 		connections = append(connections, connection)
 	}
-	return connections
+
+	return connections, nil
 }
 
 func (client *Client) ListActiveConnections() []*ActiveConnection {

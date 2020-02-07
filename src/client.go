@@ -13,12 +13,16 @@ type Client struct {
 	conn *dbus.Conn
 }
 
-func NewClient() *Client {
+func NewClient() (*Client, error) {
 	client := new(Client)
+
 	dbusConn, err := dbus.SystemBus()
-	check(err)
+	if err != nil {
+		return client, err
+	}
+
 	client.conn = dbusConn
-	return client
+	return client, nil
 }
 
 func (client *Client) Close() {

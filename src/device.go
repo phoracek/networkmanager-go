@@ -127,10 +127,14 @@ func (client *Client) newDeviceFromPath(devicePath dbus.ObjectPath) *Device {
 	return device
 }
 
-func (client *Client) GetDevices() []*Device {
-	call := client.conn.Object(InterfacePath, ObjectPath).Call(GetDevicesCall, 0)
-	check(call.Err)
+func (client *Client) GetDevices() ([]*Device, error) {
 	var devicePaths []dbus.ObjectPath
+
+	call := client.conn.Object(InterfacePath, ObjectPath).Call(GetDevicesCall, 0)
+	if call.Err != nil {
+		return nil, call.Err
+	}
+
 	call.Store(&devicePaths)
 
 	devices := make([]*Device, 0, len(devicePaths))
@@ -138,13 +142,18 @@ func (client *Client) GetDevices() []*Device {
 		device := client.newDeviceFromPath(devicePath)
 		devices = append(devices, device)
 	}
-	return devices
+	return devices, nil
 }
 
-func (client *Client) GetDeviceByIpIface(ifname string) *Device {
-	call := client.conn.Object(InterfacePath, ObjectPath).Call(GetDeviceByIpIfaceCall, 0, ifname)
-	check(call.Err)
+func (client *Client) GetDeviceByIpIface(ifname string) (*Device, error) {
 	var devicePath dbus.ObjectPath
+
+	call := client.conn.Object(InterfacePath, ObjectPath).Call(GetDeviceByIpIfaceCall, 0, ifname)
+	if call.Err != nil {
+		return nil, call.Err
+	}
+
 	call.Store(&devicePath)
-	return client.newDeviceFromPath(devicePath)
+
+	return client.newDeviceFromPath(devicePath), nil
 }

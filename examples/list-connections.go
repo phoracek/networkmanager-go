@@ -7,10 +7,17 @@ import (
 )
 
 func main() {
-	client := networkmanager.NewClient()
+	client, err := networkmanager.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	defer client.Close()
 
-	connections := client.ListConnections()
+	connections, err := client.ListConnections()
+	if err != nil {
+		panic(err)
+	}
+
 	for _, conn := range connections {
 		settings, _ := conn.GetSettings()
 		fmt.Printf("%s (%s)\n", settings["connection"]["id"], settings["connection"]["uuid"])

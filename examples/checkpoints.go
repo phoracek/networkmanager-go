@@ -3,12 +3,23 @@ package main
 import networkmanager "github.com/phoracek/networkmanager-go/src"
 
 func main() {
-	client := networkmanager.NewClient()
+	client, err := networkmanager.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	defer client.Close()
 
-	checkpoint := client.CheckpointCreate(nil, networkmanager.NmCheckpointNoTimeout, networkmanager.NmCheckpointCreateFlagNone)
+	checkpoint, err := client.CheckpointCreate(nil, networkmanager.NmCheckpointNoTimeout, networkmanager.NmCheckpointCreateFlagNone)
+	if err != nil {
+		panic(err)
+	}
+
 	client.CheckpointDestroy(checkpoint)
 
-	checkpoint = client.CheckpointCreate(nil, networkmanager.NmCheckpointNoTimeout, networkmanager.NmCheckpointCreateFlagNone)
+	checkpoint, err = client.CheckpointCreate(nil, networkmanager.NmCheckpointNoTimeout, networkmanager.NmCheckpointCreateFlagNone)
+	if err != nil {
+		panic(err)
+	}
+
 	client.CheckpointRollback(checkpoint)
 }

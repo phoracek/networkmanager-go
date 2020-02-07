@@ -21,33 +21,42 @@ type Checkpoint struct {
 	checkpointObject dbus.BusObject
 }
 
-func (client *Client) CheckpointCreate(devices []*Device, timeout uint, flags uint) *Checkpoint {
+func (client *Client) CheckpointCreate(devices []*Device, timeout uint, flags uint) (*Checkpoint, error) {
 	devicesPaths := make([]dbus.ObjectPath, len(devices))
 	for _, device := range devices {
 		devicesPaths = append(devicesPaths, device.deviceObject.Path())
 	}
 
-	call := client.conn.Object(InterfacePath, ObjectPath).Call(CheckpointCreateCall, 0, devicesPaths, timeout, flags)
-	check(call.Err)
 	var checkpointPath dbus.ObjectPath
+
+	call := client.conn.Object(InterfacePath, ObjectPath).Call(CheckpointCreateCall, 0, devicesPaths, timeout, flags)
+	if call.Err != nil {
+		return nil, call.Err
+	}
+
 	call.Store(&checkpointPath)
 
 	checkpoint := &Checkpoint{
 		checkpointObject: client.conn.Object(InterfacePath, checkpointPath),
 	}
-	return checkpoint
+	return checkpoint, nil
 }
 
 // TODO: wrap return value
-func (client *Client) CheckpointRollback(checkpoint *Checkpoint) map[string]uint {
-	call := client.conn.Object(InterfacePath, ObjectPath).Call(CheckpointRollbackCall, 0, checkpoint.checkpointObject.Path())
-	check(call.Err)
+func (client *Client) CheckpointRollback(checkpoint *Checkpoint) (map[string]uint, error) {
 	var rollbackResult map[string]uint
+
+	call := client.conn.Object(InterfacePath, ObjectPath).Call(CheckpointRollbackCall, 0, checkpoint.checkpointObject.Path())
+	if call.Err != nil {
+		return rollbackResult, call.Err
+	}
+
 	call.Store(&rollbackResult)
-	return rollbackResult
+
+	return rollbackResult, nil
 }
 
-func (client *Client) CheckpointDestroy(checkpoint *Checkpoint) {
+func (client *Client) CheckpointDestroy(checkpoint *Checkpoint) error {
 	err := client.conn.Object(InterfacePath, ObjectPath).Call(CheckpointDestroyCall, 0, checkpoint.checkpointObject.Path()).Err
-	check(err)
+	return err
 }

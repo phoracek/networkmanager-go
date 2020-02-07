@@ -9,7 +9,10 @@ import (
 )
 
 func main() {
-	client := networkmanager.NewClient()
+	client, err := networkmanager.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	defer client.Close()
 
 	bridgeSettings := map[string]map[string]interface{}{
@@ -31,7 +34,7 @@ func main() {
 		},
 	}
 
-	err := client.AddConnection(bridgeSettings)
+	err = client.AddConnection(bridgeSettings)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed", err)
 		os.Exit(1)
