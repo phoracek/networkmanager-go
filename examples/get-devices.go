@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	client, err := networkmanager.NewClient()
+	client, err := networkmanager.NewClientPrivate()
 	if err != nil {
 		panic(err)
 	}

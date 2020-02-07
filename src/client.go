@@ -33,6 +33,16 @@ func NewClientPrivate() (*Client, error) {
 		return client, err
 	}
 
+	if err := dbusConn.Auth(nil); err != nil {
+		dbusConn.Close()
+		return nil, err
+	}
+
+	if err := dbusConn.Hello(); err != nil {
+		dbusConn.Close()
+		return nil, err
+	}
+
 	client.conn = dbusConn
 	return client, nil
 }
