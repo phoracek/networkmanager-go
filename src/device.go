@@ -113,16 +113,22 @@ func (client *Client) newDeviceFromPath(devicePath dbus.ObjectPath) *Device {
 	device := new(Device)
 	device.deviceObject = deviceObject
 
-	interfacePropertyVariant, _ := deviceObject.GetProperty(DeviceInterfaceProperty)
-	device.Interface = interfacePropertyVariant.Value().(string)
+	interfacePropertyVariant, err := deviceObject.GetProperty(DeviceInterfaceProperty)
+	if err == nil {
+		device.Interface = interfacePropertyVariant.Value().(string)
+	}
 
-	deviceTypePropertyVariant, _ := deviceObject.GetProperty(DeviceDeviceTypeProperty)
-	nmDeviceType := deviceTypePropertyVariant.Value().(uint32)
-	device.Type = deviceTypeByNmDeviceType[nmDeviceType]
+	deviceTypePropertyVariant, err := deviceObject.GetProperty(DeviceDeviceTypeProperty)
+	if err == nil {
+		nmDeviceType := deviceTypePropertyVariant.Value().(uint32)
+		device.Type = deviceTypeByNmDeviceType[nmDeviceType]
+	}
 
-	deviceStatePropertyVariant, _ := deviceObject.GetProperty(DeviceStateProperty)
-	nmDeviceState := deviceStatePropertyVariant.Value().(uint32)
-	device.State = deviceStateByNmDeviceState[nmDeviceState]
+	deviceStatePropertyVariant, err := deviceObject.GetProperty(DeviceStateProperty)
+	if err == nil {
+		nmDeviceState := deviceStatePropertyVariant.Value().(uint32)
+		device.State = deviceStateByNmDeviceState[nmDeviceState]
+	}
 
 	return device
 }
