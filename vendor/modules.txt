@@ -1,4 +1,8 @@
-# github.com/godbus/dbus v4.1.0+incompatible
-github.com/godbus/dbus
+# github.com/godbus/dbus/v5 v5.0.4
+## explicit
+github.com/godbus/dbus/v5
 # github.com/satori/go.uuid v1.2.0
+## explicit
 github.com/satori/go.uuid
+# gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+## explicit
