@@ -19,7 +19,11 @@ func main() {
 	}
 
 	for _, conn := range connections {
-		settings, _ := conn.GetSettings()
+		settings, err := conn.GetSettings()
+		if err != nil {
+			panic(err)
+		}
+
 		fmt.Printf("%s (%s)\n", settings["connection"]["id"], settings["connection"]["uuid"])
 	}
 }
