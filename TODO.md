@@ -1,8 +1,0 @@
-- manage, unmanage
-- signals
-- checkpoint
-- docs
-- keep consistent naming
-- check if we need to get object from connection.conn every time
-- check Err before Store()
-- maybe it would be better to keep only paths in objects
